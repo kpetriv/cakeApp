@@ -56,6 +56,7 @@ dependencies {
 
 	implementation(platform(libs.koin.bom))
 	implementation(libs.koin.android)
+	implementation(libs.koin.compose)
 	implementation(libs.kotlin.serialization)
 	implementation(libs.retrofit.core)
 	implementation(libs.retrofit.serialization.converter)
