@@ -11,6 +11,10 @@ android {
 		version = release(37)
 	}
 
+	buildFeatures {
+		buildConfig = true
+	}
+
 	defaultConfig {
 		applicationId = "com.example.cakes"
 		minSdk = 28
@@ -22,8 +26,10 @@ android {
 	}
 
 	buildTypes {
-		release {
+		debug {
 			isDebuggable = true
+		}
+		release {
 			optimization {
 				enable = true
 				packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
@@ -66,5 +72,6 @@ dependencies {
 	implementation(libs.retrofit.serialization.converter)
 	implementation(platform(libs.okhttp.bom))
 	implementation(libs.okhttp)
+	implementation(libs.okhttp.logging)
 	implementation(libs.ui.coil)
 }

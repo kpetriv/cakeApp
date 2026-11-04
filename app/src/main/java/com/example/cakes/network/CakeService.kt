@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
 
@@ -16,7 +17,7 @@ interface CakeService {
 	suspend fun getCakes(): List<CakeDto>
 
 	companion object {
-		fun provide(): CakeService {
+		fun provide(client: OkHttpClient): CakeService {
 			val jsonConfig = Json {
 				ignoreUnknownKeys = true
 				coerceInputValues = true
@@ -26,6 +27,7 @@ interface CakeService {
 			val retrofit: Retrofit = Retrofit.Builder()
 				.baseUrl(BASE_URL)
 				.addConverterFactory(jsonConfig.asConverterFactory(contentType = jsonContentType))
+				.client(client)
 				.build()
 
 			return retrofit.create(CakeService::class.java)
