@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -35,9 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.cakes.R
 import com.example.cakes.domain.Cake
 import com.example.cakes.ui.theme.CakesTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,15 +65,21 @@ fun CakeListScreen(
 		},
 		modifier = modifier
 	) { padding ->
-		when (state.isLoading) {
-			true -> Loading(modifier = Modifier.fillMaxSize())
-			false -> Content(
+		// TODO pull to refresh and handling error when pulled down refresh fails
+		when {
+			state.isLoading -> Loading(modifier = Modifier.fillMaxSize())
+			state.isError && state.cakes.isEmpty() -> Error(
+				onRetry = { viewModel.reload() },
+				modifier = Modifier.fillMaxSize()
+			)
+			state.cakes.isNotEmpty() -> Content(
 				padding = padding,
 				scrollBehavior = scrollBehavior,
 				state = state,
 				onCakeClick = {
 					viewModel.selectCake(it)
-				})
+				}
+			)
 		}
 		state.selectedCake?.also {
 			ModalBottomSheet(
@@ -98,6 +107,19 @@ fun CakeDetails(cake: Cake, modifier: Modifier = Modifier) {
 fun Loading(modifier: Modifier = Modifier) {
 	Box(modifier = modifier, contentAlignment = Alignment.Center) {
 		CircularProgressIndicator(modifier = Modifier.size(96.dp))
+	}
+}
+
+@Composable
+fun Error(onRetry: () -> Unit, modifier: Modifier = Modifier) {
+	Box(modifier = modifier, contentAlignment = Alignment.Center) {
+		Column(horizontalAlignment = Alignment.CenterHorizontally) {
+			Text(text = stringResource(R.string.something_went_wrong))
+			Spacer(modifier = Modifier.width(16.dp))
+			Button(onClick = onRetry) {
+				Text(text = "Retry")
+			}
+		}
 	}
 }
 

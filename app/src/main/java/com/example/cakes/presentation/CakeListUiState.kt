@@ -5,6 +5,6 @@ import com.example.cakes.domain.Cake
 data class CakeListUiState(
 	val cakes: List<Cake> = emptyList(),
 	val isLoading: Boolean = false,
-	val errorMessage: String? = null,
+	val isError: Boolean = false,
 	val selectedCake: Cake? = null,
 )
