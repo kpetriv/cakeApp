@@ -6,4 +6,5 @@ data class CakeListUiState(
 	val cakes: List<Cake> = emptyList(),
 	val isLoading: Boolean = false,
 	val errorMessage: String? = null,
+	val selectedCake: Cake? = null,
 )

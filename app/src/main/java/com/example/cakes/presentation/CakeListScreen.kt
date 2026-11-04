@@ -1,6 +1,7 @@
 package com.example.cakes.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,11 +19,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -48,6 +51,7 @@ fun CakeListScreen(
 	val state by viewModel.state.collectAsState()
 	val topAppBarState = rememberTopAppBarState()
 	val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
+	val sheetState = rememberModalBottomSheetState()
 
 	Scaffold(
 		topBar = {
@@ -60,9 +64,34 @@ fun CakeListScreen(
 	) { padding ->
 		when (state.isLoading) {
 			true -> Loading(modifier = Modifier.fillMaxSize())
-			false -> Content(padding, scrollBehavior, state)
+			false -> Content(
+				padding = padding,
+				scrollBehavior = scrollBehavior,
+				state = state,
+				onCakeClick = {
+					viewModel.selectCake(it)
+				})
+		}
+		state.selectedCake?.also {
+			ModalBottomSheet(
+				sheetState = sheetState,
+				onDismissRequest = {
+					viewModel.selectCake(null)
+				}
+			) {
+				CakeDetails(cake = it, modifier = Modifier.padding(16.dp))
+			}
 		}
 	}
+}
+
+// TODO make this look a lot nicer :D
+@Composable
+fun CakeDetails(cake: Cake, modifier: Modifier = Modifier) {
+	Text(
+		text = cake.description,
+		modifier = modifier
+	)
 }
 
 @Composable
@@ -77,7 +106,8 @@ fun Loading(modifier: Modifier = Modifier) {
 fun Content(
 	padding: PaddingValues,
 	scrollBehavior: TopAppBarScrollBehavior,
-	state: CakeListUiState
+	state: CakeListUiState,
+	onCakeClick: (Cake) -> Unit,
 ) {
 	LazyColumn(
 		modifier = Modifier
@@ -93,7 +123,7 @@ fun Content(
 			Column(
 				modifier = Modifier.fillMaxWidth()
 			) {
-				CakeListItem(cake = cake)
+				CakeListItem(cake = cake, modifier = Modifier.clickable { onCakeClick(cake) })
 				if (index < state.cakes.lastIndex) {
 					HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 				}
@@ -103,10 +133,9 @@ fun Content(
 }
 
 @Composable
-fun CakeListItem(cake: Cake) {
+fun CakeListItem(cake: Cake, modifier: Modifier = Modifier) {
 	Row(
-		modifier = Modifier
-			.padding(16.dp)
+		modifier = modifier.padding(16.dp)
 	) {
 		AsyncImage(
 			modifier = Modifier

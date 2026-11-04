@@ -2,6 +2,7 @@ package com.example.cakes.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cakes.domain.Cake
 import com.example.cakes.domain.GetCakesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,5 +26,9 @@ class CakeScreenViewModel(val getCakesUseCase: GetCakesUseCase) : ViewModel() {
 			isLoading = false,
 			cakes = cakes
 		)
+	}
+
+	fun selectCake(cake: Cake?) {
+		_state.value = _state.value.copy(selectedCake = cake)
 	}
 }
