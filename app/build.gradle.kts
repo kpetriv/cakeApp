@@ -1,6 +1,8 @@
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.compose)
+	alias(libs.plugins.koin.compiler)
+	alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -21,6 +23,7 @@ android {
 
 	buildTypes {
 		release {
+			isDebuggable = true
 			optimization {
 				enable = true
 				packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
@@ -57,9 +60,11 @@ dependencies {
 	implementation(platform(libs.koin.bom))
 	implementation(libs.koin.android)
 	implementation(libs.koin.compose)
+	implementation(libs.koin.compose.viewmodel)
 	implementation(libs.kotlin.serialization)
 	implementation(libs.retrofit.core)
 	implementation(libs.retrofit.serialization.converter)
 	implementation(platform(libs.okhttp.bom))
 	implementation(libs.okhttp)
+	implementation(libs.ui.coil)
 }
