@@ -33,6 +33,14 @@ see if there were any issues I have forgotten or missed and fixed those up. I fo
 the guide to write all the code and left the readme creation to Claude as well to summarise the
 result and create references.
 
+## Screenshots
+
+| Cake list | Details sheet | Refresh failed | Load failed |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/list.png" width="200" alt="Cake list"> | <img src="docs/screenshots/details.png" width="200" alt="Cake details bottom sheet"> | <img src="docs/screenshots/refresh-error.png" width="200" alt="Snackbar after a failed refresh"> | <img src="docs/screenshots/load-error.png" width="200" alt="Full screen error state"> |
+
+Chocolate Brownies and Victoria Sponge show the placeholder because their image URLs in the feed are dead (HTTP 402 and 404).
+
 ## Requirements
 
 ### Must have
@@ -42,7 +50,7 @@ result and create references.
 | 1  | Load and display a list of cakes when the app starts          |   ✅   | `CakeScreenViewModel` loads in `init`                                 |
 | 1a | Remove duplicate entries                                      |   ✅   | `GetCakesUseCase`                                                     |
 | 1b | Order entries by name                                         |   ✅   | `GetCakesUseCase`                                                     |
-| 1c | Display image and title for each entry                        |   ✅   | `CakeListItem` with Coil `AsyncImage`                                 |
+| 1c | Display image and title for each entry                        |   ✅   | Coil `AsyncImage` with a placeholder for missing images               |
 | 1d | Display a divider between each entry                          |   ✅   | `HorizontalDivider` in the list                                       |
 | 2  | Show the cake description in a popup when an entry is clicked |   ✅   | Material 3 `ModalBottomSheet`                                         |
 | 3  | Provide a refresh option that reloads the list                |   ✅   | Material 3 `PullToRefreshBox`                                         |
@@ -93,6 +101,8 @@ CakeService ──▶ CakeRepositoryImpl ──▶ GetCakesUseCase ──▶ Cak
 - **The ViewModel exposes a single `StateFlow<CakeListUiState>`.** The screen is a function of that
   state, which keeps the list on screen during a refresh.
 - **Each screen state has a clear UI.** Loading, error, empty and content each have their own view.
+  Every load uses the same pull to refresh indicator, and the error and empty states share one
+  icon, message and action layout.
   A failed refresh keeps the list and shows a snackbar, which the ViewModel marks as shown so it
   doesn't reappear after rotation.
 
@@ -158,7 +168,6 @@ These match the `TODO` comments in the code.
   OpenTelemetry or similar.
 - **Data validation.** Validate fields and image URLs in the mapper, dropping or repairing bad
   entries.
-- **Loading and refresh UX.** Unify the initial load, refresh and error states, for example with
-  shimmer placeholders.
+- **Loading UX.** Replace the pull to refresh indicator on first launch with shimmer placeholder
+  rows.
 - **Item animations.** Animate items on first appearance, not only on list changes.
-- **Details sheet.** Give the description popup a proper design with the image and title.
