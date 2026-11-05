@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CakeScreenViewModel(val getCakesUseCase: GetCakesUseCase) : ViewModel() {
+class CakeScreenViewModel(private val getCakesUseCase: GetCakesUseCase) : ViewModel() {
 
 	private val _state = MutableStateFlow(
 		CakeListUiState()

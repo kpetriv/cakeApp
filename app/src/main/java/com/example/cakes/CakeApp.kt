@@ -11,7 +11,7 @@ class CakeApp : Application() {
 		super.onCreate()
 
 		startKoin {
-			androidLogger()
+			if (BuildConfig.DEBUG) androidLogger()
 			androidContext(this@CakeApp)
 			modules(appModule)
 		}
