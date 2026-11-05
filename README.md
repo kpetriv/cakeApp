@@ -22,7 +22,8 @@ assumptions/decisions that I have made:
    design in a couple of minutes. I would use https://stitch.withgoogle.com/ to create a design and
    then adjust the UI/design system accordingly, but I would keep that as the next immediate step.
    The doc says that is important and I would say getting it to this stage is important, the rest is
-   just a matter of opinion and the UX you want to present and there.
+   just a matter of opinion and the UX you want to present and there. Check this PR for a modified
+   version of the app with a slightly more pleasing interface done with Claude: https://github.com/kpetriv/cakeApp/pull/1
 
 ## AI Usage
 
