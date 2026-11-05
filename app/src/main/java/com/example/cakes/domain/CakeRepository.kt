@@ -1,6 +1,6 @@
-package com.example.cakes.common
+package com.example.cakes.domain
 
-import com.example.cakes.domain.Cake
+import com.example.cakes.common.Result
 
 interface CakeRepository {
 	suspend fun getCakes(): Result<List<Cake>>

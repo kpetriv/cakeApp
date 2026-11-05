@@ -1,6 +1,5 @@
 package com.example.cakes.domain
 
-import com.example.cakes.common.CakeRepository
 import com.example.cakes.common.Result
 
 class GetCakesUseCase(private val cakeRepository: CakeRepository) {

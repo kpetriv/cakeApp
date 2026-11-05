@@ -1,6 +1,6 @@
 package com.example.cakes
 
-import com.example.cakes.common.CakeRepository
+import com.example.cakes.domain.CakeRepository
 import com.example.cakes.common.Result
 import com.example.cakes.domain.Cake
 

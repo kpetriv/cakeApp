@@ -1,7 +1,7 @@
 package com.example.cakes.di
 
 import com.example.cakes.BuildConfig
-import com.example.cakes.common.CakeRepository
+import com.example.cakes.domain.CakeRepository
 import com.example.cakes.data.CakeRepositoryImpl
 import com.example.cakes.domain.GetCakesUseCase
 import com.example.cakes.network.CakeService
