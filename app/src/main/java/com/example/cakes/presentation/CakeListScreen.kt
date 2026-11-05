@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -65,22 +66,28 @@ fun CakeListScreen(
 		},
 		modifier = modifier
 	) { padding ->
-		// TODO pull to refresh and handling error when pulled down refresh fails
+		// TODO this could use a bit more thought and UX improvements to share loading, refresh
 		when {
-			state.isLoading -> Loading(modifier = Modifier.fillMaxSize())
+			state.isLoading && state.cakes.isEmpty() -> Loading(modifier = Modifier.fillMaxSize())
 			state.isError && state.cakes.isEmpty() -> Error(
 				onRetry = { viewModel.reload() },
 				modifier = Modifier.fillMaxSize()
 			)
-			state.cakes.isNotEmpty() -> Content(
-				padding = padding,
-				scrollBehavior = scrollBehavior,
-				state = state,
-				onCakeClick = {
-					viewModel.selectCake(it)
-				}
-			)
+
+			state.cakes.isNotEmpty() -> {
+				Content(
+					padding = padding,
+					scrollBehavior = scrollBehavior,
+					state = state,
+					onCakeClick = {
+						viewModel.selectCake(it)
+					},
+					onRefresh = { viewModel.reload() },
+				)
+				if (state.isLoading) Loading(modifier = Modifier.fillMaxSize())
+			}
 		}
+
 		state.selectedCake?.also {
 			ModalBottomSheet(
 				sheetState = sheetState,
@@ -106,7 +113,7 @@ fun CakeDetails(cake: Cake, modifier: Modifier = Modifier) {
 @Composable
 fun Loading(modifier: Modifier = Modifier) {
 	Box(modifier = modifier, contentAlignment = Alignment.Center) {
-		CircularProgressIndicator(modifier = Modifier.size(96.dp))
+		CircularProgressIndicator(modifier = Modifier.size(48.dp))
 	}
 }
 
@@ -130,24 +137,37 @@ fun Content(
 	scrollBehavior: TopAppBarScrollBehavior,
 	state: CakeListUiState,
 	onCakeClick: (Cake) -> Unit,
+	onRefresh: () -> Unit,
 ) {
-	LazyColumn(
-		modifier = Modifier
-			.padding(padding)
-			.nestedScroll(scrollBehavior.nestedScrollConnection),
-		contentPadding = PaddingValues(bottom = 16.dp)
+	PullToRefreshBox(
+		isRefreshing = state.isLoading,
+		onRefresh = onRefresh,
+		modifier = Modifier.fillMaxSize()
 	) {
-		itemsIndexed(
-			items = state.cakes,
-			// assuming titles would be unique
-			key = { _, item -> item.title },
-		) { index, cake ->
-			Column(
-				modifier = Modifier.fillMaxWidth()
-			) {
-				CakeListItem(cake = cake, modifier = Modifier.clickable { onCakeClick(cake) })
-				if (index < state.cakes.lastIndex) {
-					HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+		LazyColumn(
+			modifier = Modifier
+				.padding(padding)
+				.nestedScroll(scrollBehavior.nestedScrollConnection),
+			contentPadding = PaddingValues(bottom = 16.dp)
+		) {
+			itemsIndexed(
+				items = state.cakes,
+				// assuming titles would be unique
+				key = { _, item -> item.title },
+			) { index, cake ->
+				Column(
+					// TODO this adds the animate item, but only for new items or change of list,
+					// because of the list composable not being in view hierarchy due to interim
+					// loading state. so this might be better with a shimmer ghost items and then
+					// a new list state or adding appearance effect to individual items
+					modifier = Modifier
+						.fillMaxWidth()
+						.animateItem()
+				) {
+					CakeListItem(cake = cake, modifier = Modifier.clickable { onCakeClick(cake) })
+					if (index < state.cakes.lastIndex) {
+						HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+					}
 				}
 			}
 		}
