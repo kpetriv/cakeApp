@@ -20,6 +20,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -28,7 +32,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +58,24 @@ fun CakeListScreen(
 	val topAppBarState = rememberTopAppBarState()
 	val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
 	val sheetState = rememberModalBottomSheetState()
+	val snackbarHostState = remember { SnackbarHostState() }
+
+	// A failed refresh keeps the current list on screen, so report it with a snackbar instead
+	// of the full screen error state.
+	val showRefreshError = state.isError && state.cakes.isNotEmpty()
+	val refreshFailedMessage = stringResource(R.string.refresh_failed)
+	val retryLabel = stringResource(R.string.retry)
+	LaunchedEffect(showRefreshError) {
+		if (showRefreshError) {
+			val result = snackbarHostState.showSnackbar(
+				message = refreshFailedMessage,
+				actionLabel = retryLabel,
+				duration = SnackbarDuration.Short,
+			)
+			viewModel.refreshErrorShown()
+			if (result == SnackbarResult.ActionPerformed) viewModel.reload()
+		}
+	}
 
 	Scaffold(
 		topBar = {
@@ -60,6 +84,7 @@ fun CakeListScreen(
 				scrollBehavior = scrollBehavior,
 			)
 		},
+		snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
 		modifier = modifier
 	) { padding ->
 		// TODO this could use a bit more thought and UX improvements to share loading, refresh

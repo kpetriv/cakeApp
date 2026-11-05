@@ -62,6 +62,37 @@ class CakeScreenViewModelTest {
 	}
 
 	@Test
+	fun `failed reload keeps cakes on screen and flags error`() = runTest {
+		val banana = cake("Banana cake")
+		repository.result = Result.Success(listOf(banana))
+		val viewModel = createViewModel()
+		repository.result = Result.Error(IOException("no network"))
+
+		viewModel.reload()
+
+		assertEquals(
+			CakeListUiState(cakes = listOf(banana), isLoading = false, isError = true),
+			viewModel.state.value
+		)
+	}
+
+	@Test
+	fun `refreshErrorShown clears error and keeps cakes`() = runTest {
+		val banana = cake("Banana cake")
+		repository.result = Result.Success(listOf(banana))
+		val viewModel = createViewModel()
+		repository.result = Result.Error(IOException("no network"))
+		viewModel.reload()
+
+		viewModel.refreshErrorShown()
+
+		assertEquals(
+			CakeListUiState(cakes = listOf(banana), isLoading = false, isError = false),
+			viewModel.state.value
+		)
+	}
+
+	@Test
 	fun `selectCake updates selected cake`() = runTest {
 		val banana = cake("Banana cake")
 		repository.result = Result.Success(listOf(banana))

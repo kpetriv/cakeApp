@@ -21,7 +21,7 @@ class CakeScreenViewModel(private val getCakesUseCase: GetCakesUseCase) : ViewMo
 	}
 
 	private suspend fun loadCakes() {
-		_state.value = _state.value.copy(isLoading = true)
+		_state.value = _state.value.copy(isLoading = true, isError = false)
 		when (val cakes = getCakesUseCase()) {
 			is Result.Error -> _state.value = _state.value.copy(
 				isLoading = false,
@@ -34,6 +34,14 @@ class CakeScreenViewModel(private val getCakesUseCase: GetCakesUseCase) : ViewMo
 				)
 			}
 		}
+	}
+
+	/**
+	 * Called by the UI once a refresh error has been shown, so it is not shown again,
+	 * for example after a configuration change.
+	 */
+	fun refreshErrorShown() {
+		_state.value = _state.value.copy(isError = false)
 	}
 
 	fun selectCake(cake: Cake?) {
