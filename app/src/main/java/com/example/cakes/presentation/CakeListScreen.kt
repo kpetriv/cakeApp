@@ -90,12 +90,21 @@ fun CakeListScreen(
 		// TODO this could use a bit more thought and UX improvements to share loading, refresh
 		when {
 			state.isLoading && state.cakes.isEmpty() -> Loading(modifier = Modifier.fillMaxSize())
-			state.isError && state.cakes.isEmpty() -> ErrorUI(
-				onRetry = { viewModel.reload() },
+			state.isError && state.cakes.isEmpty() -> MessageWithAction(
+				message = stringResource(R.string.something_went_wrong),
+				actionLabel = stringResource(R.string.retry),
+				onAction = { viewModel.reload() },
 				modifier = Modifier.fillMaxSize()
 			)
 
-			state.cakes.isNotEmpty() -> Content(
+			state.cakes.isEmpty() -> MessageWithAction(
+				message = stringResource(R.string.no_cakes),
+				actionLabel = stringResource(R.string.refresh),
+				onAction = { viewModel.reload() },
+				modifier = Modifier.fillMaxSize()
+			)
+
+			else -> Content(
 				padding = padding,
 				scrollBehavior = scrollBehavior,
 				state = state,
@@ -135,14 +144,22 @@ private fun Loading(modifier: Modifier = Modifier) {
 	}
 }
 
+/**
+ * Full screen message with a single action, used for the error and empty states.
+ */
 @Composable
-private fun ErrorUI(onRetry: () -> Unit, modifier: Modifier = Modifier) {
+private fun MessageWithAction(
+	message: String,
+	actionLabel: String,
+	onAction: () -> Unit,
+	modifier: Modifier = Modifier,
+) {
 	Box(modifier = modifier, contentAlignment = Alignment.Center) {
 		Column(horizontalAlignment = Alignment.CenterHorizontally) {
-			Text(text = stringResource(R.string.something_went_wrong))
+			Text(text = message)
 			Spacer(modifier = Modifier.height(16.dp))
-			Button(onClick = onRetry) {
-				Text(text = stringResource(R.string.retry))
+			Button(onClick = onAction) {
+				Text(text = actionLabel)
 			}
 		}
 	}

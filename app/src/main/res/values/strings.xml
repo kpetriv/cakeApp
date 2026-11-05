@@ -4,4 +4,6 @@
     <string name="retry">Retry</string>
     <string name="cake_selection">Cake selection</string>
     <string name="refresh_failed">Couldn\'t refresh cakes</string>
+    <string name="no_cakes">No cakes to show right now</string>
+    <string name="refresh">Refresh</string>
 </resources>

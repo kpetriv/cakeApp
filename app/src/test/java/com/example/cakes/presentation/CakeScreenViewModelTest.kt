@@ -47,6 +47,18 @@ class CakeScreenViewModelTest {
 	}
 
 	@Test
+	fun `on start with successful empty load, empty state is presented`() = runTest {
+		repository.result = Result.Success(emptyList())
+
+		val viewModel = createViewModel()
+
+		assertEquals(
+			CakeListUiState(cakes = emptyList(), isLoading = false, isError = false),
+			viewModel.state.value
+		)
+	}
+
+	@Test
 	fun `reload after error clears error and presents cakes`() = runTest {
 		repository.result = Result.Error(IOException("no network"))
 		val viewModel = createViewModel()
