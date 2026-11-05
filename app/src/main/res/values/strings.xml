@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">cakes</string>
-    <string name="something_went_wrong">Something went wrong</string>
-    <string name="retry">Retry</string>
+    <string name="app_name">Cakes</string>
     <string name="cake_selection">Cake selection</string>
-    <string name="refresh_failed">Couldn\'t refresh cakes</string>
-    <string name="no_cakes">No cakes to show right now</string>
+    <string name="retry">Retry</string>
     <string name="refresh">Refresh</string>
+    <string name="refresh_failed">Couldn\'t refresh cakes</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="load_failed_message">We couldn\'t load the cakes. Check your connection and try again.</string>
+    <string name="no_cakes_title">No cakes yet</string>
+    <string name="no_cakes">There are no cakes to show right now.</string>
 </resources>
