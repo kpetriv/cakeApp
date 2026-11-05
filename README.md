@@ -4,12 +4,22 @@ An Android app that loads a list of cakes from a remote endpoint and displays th
 
 ## My approach
 
-<!-- Fill this in: how you approached the exercise, the order you tackled things in,
-     trade-offs you made, and anything you would do differently with more time. -->
+The main idea was not to overengineer and keep to the scope. There are a couple of key assumptions/decisions 
+that I have made:
+1) Deduping logic uses the data class methods for comparing. UI uses only name as a key and assuming those are unique
+2) One state object is suitable here because of pull to refresh at the very least instead of sealed states
+3) For the sake of simplicity I am doing minimal logging for debugging purposes, but in production code I have UX and Logging/Error handling as priority
+4) Repository doesn't inject a dispatcher because Retrofit uses its own thread pool so it's main thread safe. In most of the cases I would inject for testing purposes
+5) Added UseCase to encapsulate the business logic of the sorting/deduping and make it testable in isolation.
+6) Lightweight DI and fake tests to avoid bloating code with Hilt/Dagger setup, extra mock libs
 
-_To be written._
+## AI Usage
 
----
+I planned to write the code myself mostly, which I did all the way up to the last couple of commits,
+where I sped up the development with a bit of automation. I created the framework for the unit test
+fake repo and then asked claude to finish up the viewmodel test. I did a quick scan with Claude to
+see if there were any issues I have forgotten or missed and fixed those up. I followed the doc as the guide to write all the code and left the readme creation to Claude as well
+to summarise the result and create references.
 
 ## Requirements
 
